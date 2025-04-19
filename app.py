@@ -21,7 +21,7 @@ if not st.session_state.logged_in:
     if login_btn:
         if username == USERNAME and password == PASSWORD:
             st.session_state.logged_in = True
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.error("Invalid credentials ❌")
     st.stop()

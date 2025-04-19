@@ -1,64 +1,63 @@
 import streamlit as st
 import pandas as pd
 import joblib
-
+from login import login
 from sklearn.metrics import mean_squared_error, r2_score
 
-# 🔐 Login Page
-USERNAME = "admin"
-PASSWORD = "1234"
-
-if 'logged_in' not in st.session_state:
+# Handle login state
+if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
 if not st.session_state.logged_in:
-    st.title("🔐 Login Required")
-
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    login_btn = st.button("Login")
-
-    if login_btn:
-        if username == USERNAME and password == PASSWORD:
-            st.session_state.logged_in = True
-            st.rerun()
-        else:
-            st.error("Invalid credentials ❌")
+    login()
     st.stop()
 
-# ✅ Main App Starts After Login
-st.title("🔍 Energy Consumption Prediction")
+# Title after successful login
+st.title("🔍 Global Energy Consumption Prediction")
+st.write("Welcome! This app compares model performance on predicting energy consumption per capita.")
 
-# Upload dataset
-uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+# Load the CSV data
+data = pd.read_csv("sample_data.csv")
 
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
+# Load trained models and scaler
+rf = joblib.load("rf_model.pkl")
+gb = joblib.load("gb_model.pkl")
+lr = joblib.load("lr_model.pkl")
+scaler = joblib.load("scaler.pkl")
 
-    # Select columns used for prediction
-    selected_cols = [
-        'Access_to_electricity_of_population',
-        'GDP per capita',
-        'Financial_flows_to_developing_countries_US',
-        'Renewable electricity Generating Capacity per capita',
-        'Electricity_from_fossil_fuels_TWh'
-    ]
+# Define input features
+features = [
+    'Access_to_electricity_of_population',
+    'GDP per capita',
+    'Financial_flows_to_developing_countries_US',
+    'Renewable electricity Generating Capacity per capita',
+    'Electricity_from_fossil_fuels_TWh'
+]
 
-    target_col = 'Primary_energy_consumption_per_capita_kWh_person'
+# Get inputs and scale
+X = data[features]
+X_scaled = scaler.transform(X)
+y_true = data['Primary_energy_consumption_per_capita_kWh_person']
 
-    # Load model and preprocessing objects
-    rf_model = joblib.load("rf_model.pkl")
-    imputer = joblib.load("imputer.pkl")
-    scaler = joblib.load("scaler.pkl")
+# Make predictions
+pred_rf = rf.predict(X_scaled)
+pred_gb = gb.predict(X_scaled)
+pred_lr = lr.predict(X_scaled)
 
-    # Prepare data
-    data = df[selected_cols]
-    data_imputed = imputer.transform(data)
-    data_scaled = scaler.transform(data_imputed)
+# Evaluate each model
+def evaluate_model(name, y_true, y_pred):
+    return {
+        "Model": name,
+        "MSE": mean_squared_error(y_true, y_pred),
+        "R2 Score": r2_score(y_true, y_pred)
+    }
 
-    # Make predictions
-    predictions = rf_model.predict(data_scaled)
-    df['Predicted_Energy_Consumption'] = predictions
+results = [
+    evaluate_model("Random Forest", y_true, pred_rf),
+    evaluate_model("Gradient Boosting", y_true, pred_gb),
+    evaluate_model("Linear Regression", y_true, pred_lr)
+]
 
-    st.subheader("📊 Prediction Results")
-    st.write(df[[*selected_cols, 'Predicted_Energy_Consumption']])
+# Display results
+st.subheader("📊 Model Evaluation Results")
+st.dataframe(pd.DataFrame(results))

@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: energy-predictor-streamlit
+    runtime: python
+    buildCommand: ""
+    startCommand: streamlit run app.py --server.port=10000
+    envVars:
+      - key: PORT
+        value: 10000

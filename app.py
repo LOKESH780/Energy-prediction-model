@@ -1,6 +1,26 @@
 import streamlit as st
 import joblib
 import numpy as np
+from credentials import CREDENTIALS  # import credentials
+
+# Session state to track login
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+# Login form
+if not st.session_state.logged_in:
+    st.title("🔐 Login Required")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    login_btn = st.button("Login")
+
+    if login_btn:
+        if username == CREDENTIALS["username"] and password == CREDENTIALS["password"]:
+            st.session_state.logged_in = True
+            st.rerun()
+        else:
+            st.error("Invalid credentials ❌")
+    st.stop()
 
 # Load trained components
 model = joblib.load('rf_model.pkl')

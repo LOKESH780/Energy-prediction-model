@@ -1,56 +1,92 @@
+
 import streamlit as st
 import joblib
 import numpy as np
-from credentials import CREDENTIALS  # import credentials
+import pandas as pd
+from login import login
+from io import BytesIO
 
-# Session state to track login
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# Login form
 if not st.session_state.logged_in:
-    st.title("🔐 Login Required")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    login_btn = st.button("Login")
-
-    if login_btn:
-        if username == CREDENTIALS["username"] and password == CREDENTIALS["password"]:
-            st.session_state.logged_in = True
-            st.rerun()
-        else:
-            st.error("Invalid credentials ❌")
+    login()
     st.stop()
 
-# Load trained components
+# Load model and preprocessing tools
 model = joblib.load('rf_model.pkl')
 scaler = joblib.load('scaler.pkl')
 imputer = joblib.load('imputer.pkl')
 
 st.title("🔌 Global Energy Consumption Predictor")
 
-st.markdown("Enter the values below to predict energy consumption per capita (kWh/person):")
+# User chooses input method
+input_method = st.radio("Select Input Method:", ["Manual Input", "Upload CSV File"])
 
-# Input form
-electricity = st.number_input("Access to Electricity (% population)", min_value=0.0, max_value=100.0)
-gdp_per_capita = st.number_input("GDP per Capita", min_value=0.0)
-financial_flows = st.number_input("Financial Flows to Developing Countries (USD)", min_value=0.0)
-renewable_capacity = st.number_input("Renewable Electricity Generating Capacity per Capita", min_value=0.0)
-fossil_fuel_electricity = st.number_input("Electricity from Fossil Fuels (TWh)", min_value=0.0)
+# Required feature columns
+feature_cols = [
+    "Access_to_electricity_of_population",
+    "GDP per capita",
+    "Financial_flows_to_developing_countries_US",
+    "Renewable electricity Generating Capacity per capita",
+    "Electricity_from_fossil_fuels_TWh"
+]
 
-if st.button("Predict"):
-    user_input = [[
-        electricity,
-        gdp_per_capita,
-        financial_flows,
-        renewable_capacity,
-        fossil_fuel_electricity
-    ]]
+if input_method == "Manual Input":
+    st.subheader("📝 Enter values manually")
+    col1, col2 = st.columns(2)
+    with col1:
+        electricity = st.number_input("⚡ Access to Electricity (% population)", min_value=0.0, max_value=100.0)
+        gdp_per_capita = st.number_input("💰 GDP per Capita", min_value=0.0)
+        financial_flows = st.number_input("🌍 Financial Flows to Developing Countries (USD)", min_value=0.0)
+    with col2:
+        renewable_capacity = st.number_input("🔋 Renewable Electricity Capacity per Capita", min_value=0.0)
+        fossil_fuel_electricity = st.number_input("🔥 Electricity from Fossil Fuels (TWh)", min_value=0.0)
 
-    # Preprocessing
-    input_imputed = imputer.transform(user_input)
-    input_scaled = scaler.transform(input_imputed)
+    if st.button("Predict 🔮"):
+        user_input = [[
+            electricity,
+            gdp_per_capita,
+            financial_flows,
+            renewable_capacity,
+            fossil_fuel_electricity
+        ]]
+        input_imputed = imputer.transform(user_input)
+        input_scaled = scaler.transform(input_imputed)
+        prediction = model.predict(input_scaled)[0]
+        st.success(f"🌟 Predicted Energy Consumption per Capita: {prediction:.2f} kWh/person")
 
-    # Prediction
-    prediction = model.predict(input_scaled)[0]
-    st.success(f"🌍 Predicted Energy Consumption per Capita: {prediction:.2f} kWh/person")
+elif input_method == "Upload CSV File":
+    st.subheader("📁 Upload CSV for batch prediction")
+    uploaded_file = st.file_uploader("Choose a CSV file", type=["csv"])
+
+    if uploaded_file:
+        try:
+            df = pd.read_csv(uploaded_file)
+            st.write("✅ File Uploaded Successfully!")
+            st.dataframe(df.head())
+
+            if not all(col in df.columns for col in feature_cols):
+                st.error(f"❌ CSV must contain the following columns: {', '.join(feature_cols)}")
+            else:
+                X = df[feature_cols]
+                X_imputed = imputer.transform(X)
+                X_scaled = scaler.transform(X_imputed)
+                predictions = model.predict(X_scaled)
+                df["Predicted Energy Consumption"] = predictions
+                st.success("✅ Prediction Completed!")
+                st.dataframe(df)
+
+                # Prepare download
+                csv_buffer = BytesIO()
+                df.to_csv(csv_buffer, index=False)
+                csv_data = csv_buffer.getvalue()
+
+                st.download_button(
+                    label="📥 Download Predictions as CSV",
+                    data=csv_data,
+                    file_name="predicted_energy_consumption.csv",
+                    mime="text/csv"
+                )
+        except Exception as e:
+            st.error(f"Something went wrong while reading the file: {e}")

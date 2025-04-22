@@ -24,13 +24,7 @@ st.title("🔌 Global Energy Consumption Predictor")
 input_method = st.radio("Select Input Method:", ["Manual Input", "Upload CSV File"])
 
 # Original feature column names as used during model training
-feature_cols = [
-    "Access_to_electricity_of_population",
-    "GDP per capita",
-    "Financial_flows_to_developing_countries_US",
-    "Renewable electricity Generating Capacity per capita",
-    "Electricity_from_fossil_fuels_TWh"
-]
+feature_cols = ['Access_to_electricity_of_population', 'gdp_per_capita', 'Financial_flows_to_developing_countries_US', 'Renewable_electricity_generating_capacity_per_capita', 'Electricity_from_fossil_fuels_TWh']
 
 if input_method == "Manual Input":
     st.subheader("📝 Enter values manually")

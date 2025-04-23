@@ -17,7 +17,7 @@ if not st.session_state.logged_in:
 with st.sidebar:
     if st.button("🚪 Logout"):
         st.session_state.logged_in = False
-        st.experimental_rerun()
+        st.rerun()
 
 # Load model and preprocessors
 model = joblib.load('rf_model.pkl')

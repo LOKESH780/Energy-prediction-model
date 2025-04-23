@@ -5,7 +5,7 @@ import pandas as pd
 from login import login
 from io import BytesIO
 
-# Login state check
+# Login check
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
@@ -13,18 +13,28 @@ if not st.session_state.logged_in:
     login()
     st.stop()
 
-# Load model and preprocessing tools
+# Logout button
+with st.sidebar:
+    if st.button("🚪 Logout"):
+        st.session_state.logged_in = False
+        st.experimental_rerun()
+
+# Load model and preprocessors
 model = joblib.load('rf_model.pkl')
 scaler = joblib.load('scaler.pkl')
 imputer = joblib.load('imputer.pkl')
 
 st.title("🔌 Global Energy Consumption Predictor")
 
-# User chooses input method
 input_method = st.radio("Select Input Method:", ["Manual Input", "Upload CSV File"])
 
-# Original feature column names as used during model training
-feature_cols = ['Access_to_electricity_of_population', 'gdp_per_capita', 'Financial_flows_to_developing_countries_US', 'Renewable_electricity_generating_capacity_per_capita', 'Electricity_from_fossil_fuels_TWh']
+feature_cols = [
+    "Access_to_electricity_of_population",
+    "gdp_per_capita",
+    "Financial_flows_to_developing_countries_US",
+    "Renewable_electricity_generating_capacity_per_capita",
+    "Electricity_from_fossil_fuels_TWh"
+]
 
 if input_method == "Manual Input":
     st.subheader("📝 Enter values manually")
@@ -71,7 +81,6 @@ elif input_method == "Upload CSV File":
                 st.success("✅ Prediction Completed!")
                 st.dataframe(df)
 
-                # Prepare download
                 csv_buffer = BytesIO()
                 df.to_csv(csv_buffer, index=False)
                 csv_data = csv_buffer.getvalue()

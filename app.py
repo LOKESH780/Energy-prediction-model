@@ -13,8 +13,9 @@ if not st.session_state.logged_in:
     login()
     st.stop()
 
-# Logout button
-with st.sidebar:
+# Logout button aligned to top-right using columns
+col1, col2, col3 = st.columns([6, 1, 1])
+with col3:
     if st.button("🚪 Logout"):
         st.session_state.logged_in = False
         st.rerun()

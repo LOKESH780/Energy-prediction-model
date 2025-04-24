@@ -1,11 +1,38 @@
+
 import streamlit as st
 import joblib
 import numpy as np
 import pandas as pd
 from login import login
 from io import BytesIO
+import base64
 
-# Login check
+# === Custom background image from local file ===
+def add_bg_from_local(image_file):
+    with open(image_file, "rb") as img:
+        encoded = base64.b64encode(img.read()).decode()
+    st.markdown(f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/jpeg;base64,{encoded}");
+            background-size: cover;
+            background-position: center;
+        }}
+        h1, h2, h3 {{
+            color: #003366;
+        }}
+        .stButton > button {{
+            color: white;
+            background-color: #0066cc;
+            border-radius: 8px;
+            padding: 0.5em 1em;
+        }}
+        </style>
+    """, unsafe_allow_html=True)
+
+add_bg_from_local("background.jpeg")
+
+# === Login Logic ===
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
@@ -13,14 +40,14 @@ if not st.session_state.logged_in:
     login()
     st.stop()
 
-# Logout button aligned to top-right using columns
+# === Logout Button on Top-Right ===
 col1, col2, col3 = st.columns([6, 1, 1])
 with col3:
     if st.button("🚪 Logout"):
         st.session_state.logged_in = False
         st.rerun()
 
-# Load model and preprocessors
+# === Load Model and Transformers ===
 model = joblib.load('rf_model.pkl')
 scaler = joblib.load('scaler.pkl')
 imputer = joblib.load('imputer.pkl')
@@ -37,6 +64,7 @@ feature_cols = [
     "Electricity_from_fossil_fuels_TWh"
 ]
 
+# === Manual Input Mode ===
 if input_method == "Manual Input":
     st.subheader("📝 Enter values manually")
     col1, col2 = st.columns(2)
@@ -61,6 +89,7 @@ if input_method == "Manual Input":
         prediction = model.predict(input_scaled)[0]
         st.success(f"🌟 Predicted Energy Consumption per Capita: {prediction:.2f} kWh/person")
 
+# === CSV Upload Mode ===
 elif input_method == "Upload CSV File":
     st.subheader("📁 Upload CSV for batch prediction")
     uploaded_file = st.file_uploader("Choose a CSV file", type=["csv"])

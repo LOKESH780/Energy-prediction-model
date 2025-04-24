@@ -1,4 +1,3 @@
-
 import streamlit as st
 import joblib
 import numpy as np
@@ -7,19 +6,19 @@ from login import login
 from io import BytesIO
 import base64
 
-# === Custom background image from local file ===
+# === Background (optional) ===
 def add_bg_from_local(image_file):
     with open(image_file, "rb") as img:
         encoded = base64.b64encode(img.read()).decode()
     st.markdown(f"""
         <style>
         .stApp {{
-            background-image: url("data:image/png;base64,{encoded}");
+            background-image: url("data:image/jpeg;base64,{encoded}");
             background-size: cover;
             background-position: center;
         }}
         h1, h2, h3 {{
-            color: #003366;
+            color: #ffffff;
         }}
         .stButton > button {{
             color: white;
@@ -28,11 +27,12 @@ def add_bg_from_local(image_file):
             padding: 0.5em 1em;
             min-width: 100px;
             text-align: center;
+            font-weight: bold;
         }}
         </style>
     """, unsafe_allow_html=True)
 
-add_bg_from_local("wallpaper.png")
+add_bg_from_local("background.jpeg")
 
 # === Login Logic ===
 if "logged_in" not in st.session_state:
@@ -49,10 +49,9 @@ with col3:
         st.session_state.logged_in = False
         st.rerun()
 
-# === Load Model and Transformers ===
+# === Load Model and Scaler Only ===
 model = joblib.load('rf_model.pkl')
 scaler = joblib.load('scaler.pkl')
-imputer = joblib.load('imputer.pkl')
 
 st.title("🔌 Global Energy Consumption Predictor")
 
@@ -86,8 +85,9 @@ if input_method == "Manual Input":
             renewable_capacity,
             fossil_fuel_electricity
         ]]
-        input_imputed = imputer.transform(user_input)
-        input_scaled = scaler.transform(input_imputed)
+        input_df = pd.DataFrame(user_input, columns=feature_cols)
+        input_filled = input_df.fillna(0)
+        input_scaled = scaler.transform(input_filled)
         prediction = model.predict(input_scaled)[0]
         st.success(f"🌟 Predicted Energy Consumption per Capita: {prediction:.2f} kWh/person")
 
@@ -105,9 +105,8 @@ elif input_method == "Upload CSV File":
             if not all(col in df.columns for col in feature_cols):
                 st.error(f"❌ CSV must contain the following columns: {', '.join(feature_cols)}")
             else:
-                X = df[feature_cols]
-                X_imputed = imputer.transform(X)
-                X_scaled = scaler.transform(X_imputed)
+                X = df[feature_cols].fillna(0)
+                X_scaled = scaler.transform(X)
                 predictions = model.predict(X_scaled)
                 df["Predicted Energy Consumption"] = predictions
                 st.success("✅ Prediction Completed!")

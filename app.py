@@ -7,6 +7,7 @@ from io import BytesIO
 import base64
 
 # === Background (optional) ===
+''''
 def add_bg_from_local(image_file):
     with open(image_file, "rb") as img:
         encoded = base64.b64encode(img.read()).decode()
@@ -33,7 +34,7 @@ def add_bg_from_local(image_file):
     """, unsafe_allow_html=True)
 
 add_bg_from_local("wallpaper.png")
-
+''''
 # === Login Logic ===
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False

@@ -14,7 +14,7 @@ def add_bg_from_local(image_file):
     st.markdown(f"""
         <style>
         .stApp {{
-            background-image: url("data:image/jpg;base64,{encoded}");
+            background-image: url("data:image/png;base64,{encoded}");
             background-size: cover;
             background-position: center;
         }}
@@ -32,7 +32,7 @@ def add_bg_from_local(image_file):
         </style>
     """, unsafe_allow_html=True)
 
-add_bg_from_local("wallpaper1.jpg")
+add_bg_from_local("wallpaper.png")
 
 # === Login Logic ===
 if "logged_in" not in st.session_state:

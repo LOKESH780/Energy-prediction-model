@@ -7,34 +7,34 @@ from io import BytesIO
 import base64
 
 # === Background (optional) ===
-''''
-def add_bg_from_local(image_file):
-    with open(image_file, "rb") as img:
-        encoded = base64.b64encode(img.read()).decode()
-    st.markdown(f"""
-        <style>
-        .stApp {{
-            background-image: url("data:image/png;base64,{encoded}");
-            background-size: cover;
-            background-position: center;
-        }}
-        h1, h2, h3 {{
-            color: #ffffff;
-        }}
-        .stButton > button {{
-            color: white;
-            background-color: #0066cc;
-            border-radius: 8px;
-            padding: 0.5em 1em;
-            min-width: 100px;
-            text-align: center;
-            font-weight: bold;
-        }}
-        </style>
-    """, unsafe_allow_html=True)
 
-add_bg_from_local("wallpaper.png")
-''''
+#def add_bg_from_local(image_file):
+#    with open(image_file, "rb") as img:
+#        encoded = base64.b64encode(img.read()).decode()
+#    st.markdown(f"""
+  #      <style>
+  #      .stApp {{
+   #         background-image: url("data:image/png;base64,{encoded}");
+   #         background-size: cover;
+   #         background-position: center;
+   #     }}
+   #     h1, h2, h3 {{
+    #        color: #ffffff;
+    #    }}
+    #    .stButton > button {{
+     #       color: white;
+      #      background-color: #0066cc;
+       #     border-radius: 8px;
+      #      padding: 0.5em 1em;
+    #        min-width: 100px;
+    #        text-align: center;
+   #         font-weight: bold;
+   #     }}
+   #     </style>
+  #  """, unsafe_allow_html=True)
+
+#add_bg_from_local("wallpaper.png")
+
 # === Login Logic ===
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False

@@ -26,6 +26,8 @@ def add_bg_from_local(image_file):
             background-color: #0066cc;
             border-radius: 8px;
             padding: 0.5em 1em;
+            min-width: 100px;
+            text-align: center;
         }}
         </style>
     """, unsafe_allow_html=True)

@@ -118,15 +118,14 @@ elif input_method == "Upload CSV File":
                 min_consumption = df["Predicted Energy Consumption"].min()
                 max_consumption = df["Predicted Energy Consumption"].max()
 
-                # Display KPIs
-                col1, col2, col3, col4 = st.columns(4)
+
+                # Display KPIs in two rows of two
+                col1, col2 = st.columns(2)
                 with col1:
                     st.metric("Total Records", total_records)
-                with col2:
                     st.metric("Average Energy Consumption", f"{average_consumption:.2f} kWh/person")
-                with col3:
+                with col2:
                     st.metric("Min Consumption", f"{min_consumption:.2f} kWh/person")
-                with col4:
                     st.metric("Max Consumption", f"{max_consumption:.2f} kWh/person")
                 
                 st.dataframe(df)

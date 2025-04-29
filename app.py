@@ -111,6 +111,24 @@ elif input_method == "Upload CSV File":
                 predictions = model.predict(X_scaled)
                 df["Predicted Energy Consumption"] = predictions
                 st.success("✅ Prediction Completed!")
+                
+                # === KPIs ===
+                total_records = len(df)
+                average_consumption = df["Predicted Energy Consumption"].mean()
+                min_consumption = df["Predicted Energy Consumption"].min()
+                max_consumption = df["Predicted Energy Consumption"].max()
+
+                # Display KPIs
+                col1, col2, col3, col4 = st.columns(4)
+                with col1:
+                    st.metric("Total Records", total_records)
+                with col2:
+                    st.metric("Average Energy Consumption", f"{average_consumption:.2f} kWh/person")
+                with col3:
+                    st.metric("Min Consumption", f"{min_consumption:.2f} kWh/person")
+                with col4:
+                    st.metric("Max Consumption", f"{max_consumption:.2f} kWh/person")
+                
                 st.dataframe(df)
 
                 csv_buffer = BytesIO()

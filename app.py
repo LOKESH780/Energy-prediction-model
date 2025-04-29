@@ -101,7 +101,7 @@ elif input_method == "Upload CSV File":
         try:
             df = pd.read_csv(uploaded_file)
             st.write("✅ File Uploaded Successfully!")
-            st.dataframe(df.head())
+            #st.dataframe(df.head())
 
             if not all(col in df.columns for col in feature_cols):
                 st.error(f"❌ CSV must contain the following columns: {', '.join(feature_cols)}")

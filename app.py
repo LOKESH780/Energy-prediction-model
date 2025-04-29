@@ -113,6 +113,24 @@ elif input_method == "Upload CSV File":
                 st.success("✅ Prediction Completed!")
                 st.dataframe(df)
 
+                # Visualization - Bar Chart of Predictions
+                st.subheader("📊 Energy Consumption Predictions")
+                fig, ax = plt.subplots(figsize=(10, 6))
+                sns.barplot(x=df.index, y="Predicted Energy Consumption", data=df, ax=ax, palette="viridis")
+                ax.set_xlabel("Index", fontsize=12)
+                ax.set_ylabel("Predicted Energy Consumption (kWh/person)", fontsize=12)
+                ax.set_title("Predicted Energy Consumption per Capita", fontsize=14)
+                st.pyplot(fig)
+
+                # Optional: Distribution Plot (to understand the spread of predictions)
+                st.subheader("📈 Distribution of Predictions")
+                fig, ax = plt.subplots(figsize=(10, 6))
+                sns.histplot(df["Predicted Energy Consumption"], kde=True, ax=ax, color="blue", bins=20)
+                ax.set_xlabel("Predicted Energy Consumption (kWh/person)", fontsize=12)
+                ax.set_ylabel("Frequency", fontsize=12)
+                ax.set_title("Distribution of Predicted Energy Consumption", fontsize=14)
+                st.pyplot(fig)
+
                 csv_buffer = BytesIO()
                 df.to_csv(csv_buffer, index=False)
                 csv_data = csv_buffer.getvalue()

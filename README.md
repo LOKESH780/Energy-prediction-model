@@ -27,7 +27,6 @@ A web application for predicting global energy consumption per capita using mach
 | `credentials.py`             | Stores login credentials (default: admin/password123).                      |
 | `rf_model.pkl`               | Pre-trained Random Forest model for energy prediction.                      |
 | `scaler.pkl`                 | Scaler object for feature normalization.                                    |
-| `imputer.pkl`                | (If used) Imputer for handling missing values.                              |
 | `requirements.txt`           | Python dependencies.                                                        |
 | `render.yaml`                | Deployment configuration for Render.com.                                    |
 | `sample_energy_mixed_case.csv`| Example CSV for batch prediction.                                           |

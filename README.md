@@ -95,8 +95,3 @@ Access_to_electricity_of_population,gdp_per_capita,Financial_flows_to_developing
 - **Model/Scaler Files**: Ensure `rf_model.pkl` and `scaler.pkl` are present in the root directory.
 - **Imputer**: If used, ensure `imputer.pkl` is also present.
 - **Background Image**: `wallpaper.png` is used for UI styling.
-
----
-
-## License
-Specify your license here.

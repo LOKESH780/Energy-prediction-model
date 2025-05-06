@@ -2,6 +2,8 @@
 
 A web application for predicting global energy consumption per capita using machine learning. The app provides both manual and batch (CSV) prediction modes, a secure login system, and a user-friendly interface built with Streamlit.
 
+![Analysis Dashboard](screenshots/Analysis%20Part.png)
+
 ---
 
 ## Features
@@ -9,6 +11,12 @@ A web application for predicting global energy consumption per capita using mach
 - **Batch Prediction**: Upload a CSV file for batch predictions and download results.
 - **Login System**: Simple authentication to restrict access.
 - **Modern UI**: Custom background and styled interface.
+
+### Manual Prediction Interface
+![Manual Prediction](screenshots/Prediction_manual_screenshots.png)
+
+### Batch Prediction Interface
+![Batch Prediction](screenshots/Prediction_csv_screenshots.png)
 
 ---
 

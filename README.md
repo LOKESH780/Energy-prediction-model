@@ -2,8 +2,6 @@
 
 A web application for predicting global energy consumption per capita using machine learning. The app provides both manual and batch (CSV) prediction modes, a secure login system, and a user-friendly interface built with Streamlit.
 
-![Analysis Dashboard](screenshots/Analysis%20Part.png)
-
 ---
 
 ## Features
